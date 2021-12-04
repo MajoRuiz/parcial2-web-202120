@@ -25,6 +25,44 @@ export const Chart = ({ width = 600, height = 600, data }) => {
       .range([0, iwidth])
       .padding(0.1);
 
+      const bars = g.selectAll("rect").data(data);
+      bars.enter().append("rect")
+        .attr("class", "bar")
+        .style("fill", "steelblue")
+        .attr("x", d => x(d.name))
+        .attr("y", d => y(d.stock))
+        .attr("height", d => iheight - y(d.stock))
+        .attr("width", x.bandwidth())  
+        .on('mousemove',mouseOver )
+        .on('mouseout', mouseOut)
+      
+      const div = d3.select("body")
+                    .append("div")
+                    .style("opacity", 1)
+                    .style("position", "absolute");
+      
+      function mouseOut() {
+          div.transition().style('opacity', 0);
+      }
+        
+      function mouseOver(bar, product) { 
+        div.transition().style('opacity', 0.9);
+      
+        div.html(`${product.name} : ${product.stock}`)
+          .style('background-color', 'black')
+          .style('color','white')
+          .style('top', (bar.y + 25) + 'px')
+          .style('left', (bar.x + 40) + 'px')
+          .style('border', '1px solid')
+          .style('border-color', 'white');
+
+      
+      }
+      
+      g.append("g")
+        .classed("y--axis", true)
+        .call(d3.axisLeft(y));
+
     // Continue with implementation. Don't forget the tooltip
   });
 
